@@ -1,0 +1,7 @@
+{
+  "name": "Vibeo — Смотрим вместе",
+  "description": "Сервис для синхронного просмотра фильмов и видео с друзьями — вместе, где бы вы ни были.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

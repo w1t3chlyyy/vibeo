@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>О нас — Vibeo</title>
+    <meta name="description" content="О сервисе Vibeo — синхронный просмотр кино и видео с друзьями." />
+    <link rel="icon" type="image/png" href="/assets/aistudio/Frame_109_723ce2c6.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root{--bg:#0a0a0b;--ink:#f4f1ea;--mid:#8d8b86;--line:rgba(244,241,234,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter Tight',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+header{position:sticky;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:24px 32px;background:rgba(10,10,11,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);z-index:20}
+.logo{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:600;letter-spacing:.09em;color:var(--ink);text-decoration:none}
+.logo img{width:22px;height:22px;object-fit:contain;display:block;border-radius:3px}
+.logo svg{width:22px;height:18px;fill:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.btn-pill{display:flex;align-items:center;gap:8px;height:32px;padding:0 15px;border:1px solid rgba(244,241,234,.55);border-radius:99px;color:var(--ink);text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.06em;transition:background .2s,color .2s;cursor:pointer}
+.btn-pill:hover{background:var(--ink);color:var(--bg)}
+.btn-pill i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.back-link{font:500 11.5px 'IBM Plex Mono',monospace;color:var(--mid);text-decoration:none;padding:8px 14px;border:1px solid var(--line);border-radius:99px;transition:all .2s}
+.back-link:hover{color:var(--ink);border-color:var(--ink);background:rgba(244,241,234,.05)}
+.container{max-width:1040px;margin:0 auto;padding:70px 24px 100px}
+.tag{font:500 12px 'IBM Plex Mono',monospace;letter-spacing:.12em;color:var(--mid);margin-bottom:24px}
+h1{font-size:clamp(34px,5.4vw,72px);line-height:1.08;letter-spacing:-.045em;font-weight:500;margin-bottom:28px;max-width:17ch}
+.lead{font-size:clamp(17px,2vw,24px);line-height:1.45;color:var(--ink);margin-bottom:70px;max-width:32ch;font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;border-top:1px solid var(--line);padding-top:48px;margin-bottom:70px}
+.card{border:1px solid var(--line);padding:32px;border-radius:4px;background:rgba(244,241,234,.02);display:flex;flex-direction:column;gap:12px;transition:border-color .2s}
+.card:hover{border-color:rgba(244,241,234,.35)}
+.card-num{font:500 11.5px 'IBM Plex Mono',monospace;color:var(--mid)}
+.card-title{font-size:20px;font-weight:500;letter-spacing:-.02em}
+.card-p{font-size:14.5px;line-height:1.55;color:var(--mid)}
+.manifesto{background:rgba(244,241,234,.03);border:1px solid var(--line);border-radius:6px;padding:50px 36px;text-align:center;margin-bottom:60px}
+.manifesto h3{font-size:clamp(22px,3vw,34px);letter-spacing:-.03em;margin-bottom:16px;font-weight:400}
+.manifesto p{font-size:16px;line-height:1.6;color:var(--mid);max-width:650px;margin:0 auto 28px}
+footer{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:32px;font:400 12px 'IBM Plex Mono',monospace;color:var(--mid)}
+@media (max-width:760px){
+  header{padding:18px}.container{padding:40px 18px}.grid{grid-template-columns:1fr;gap:18px}.manifesto{padding:32px 20px}
+}
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">
+        <img src="/assets/aistudio/Frame_109_723ce2c6.png" alt="Vibeo" />
+        VIBEO
+      </a>
+      <div class="nav-actions">
+        <a href="/register.html" class="btn-pill"><i></i>НАЧАТЬ</a>
+        <a href="/" class="back-link">← НА ГЛАВНУЮ</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="tag">01 / О ПРОЕКТЕ VIBEO</div>
+      <h1>Один экран. Тысячи километров. Никакой разницы.</h1>
+      <p class="lead">
+        Мы создали Vibeo, чтобы расстояние перестало быть преградой для душевных киновечеров. Смотрите видео с друзьями в едином темпе и делитесь эмоциями прямо сейчас.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-num">01 / ТОЧНОСТЬ</div>
+          <div class="card-title">Синхронизация секунда в секунду</div>
+          <div class="card-p">Пауза, запуск и перемотка происходят одновременно для всех зрителей в комнате с точностью до миллисекунды.</div>
+        </div>
+        <div class="card">
+          <div class="card-num">02 / ЭМОЦИИ</div>
+          <div class="card-title">Голосовой чат и живые реакции</div>
+          <div class="card-p">Обсуждайте сюжет голосом, делитесь смехом и отправляйте мгновенные реакции прямо поверх плеера.</div>
+        </div>
+        <div class="card">
+          <div class="card-num">03 / СВОБОДА</div>
+          <div class="card-title">Любой контент без ограничений</div>
+          <div class="card-p">YouTube, сериалы, прямые потоки или файлы с вашего диска — воспроизводите всё, что хотите.</div>
+        </div>
+        <div class="card">
+          <div class="card-num">04 / ПРОСТОТА</div>
+          <div class="card-title">Комнаты по одной ссылке</div>
+          <div class="card-p">Никаких сложных настроек. Создали комнату, скинули ссылку другу — и через пару секунд вы смотрите вместе.</div>
+        </div>
+      </div>
+
+      <div class="manifesto">
+        <div class="tag">ФИЛОСОФИЯ</div>
+        <h3>Кино создано для совместных переживаний.</h3>
+        <p>Забудьте о счёте «три-два-один-пуск» в чатах. Vibeo делает просмотр по-настоящему синхронным и естественным.</p>
+        <a href="/register.html" class="btn-pill" style="display:inline-flex;padding:12px 28px;height:auto">СОЗДАТЬ КОМНАТУ &nbsp;→</a>
+      </div>
+
+      <footer>
+        <div>VIBEO MEDIA SYNC 2026</div>
+        <a href="/" style="color:var(--ink);text-decoration:none">НА ГЛАВНУЮ ↑</a>
+      </footer>
+    </main>
+  </body>
+</html>

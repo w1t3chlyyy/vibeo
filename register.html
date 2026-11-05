@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Регистрация — Vibeo</title>
+    <meta name="description" content="Регистрация в Vibeo — создайте комнату синхронного просмотра." />
+    <link rel="icon" type="image/png" href="/assets/aistudio/Frame_109_723ce2c6.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root{--bg:#0a0a0b;--ink:#f4f1ea;--mid:#8d8b86;--line:rgba(244,241,234,.14)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter Tight',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+header{position:sticky;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:24px 32px;background:rgba(10,10,11,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);z-index:20}
+.logo{display:flex;align-items:center;gap:9px;font-size:19px;font-weight:600;letter-spacing:.09em;color:var(--ink);text-decoration:none}
+.logo img{width:22px;height:22px;object-fit:contain;display:block;border-radius:3px}
+.logo svg{width:22px;height:18px;fill:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.back-link{font:500 11.5px 'IBM Plex Mono',monospace;color:var(--mid);text-decoration:none;padding:8px 14px;border:1px solid var(--line);border-radius:99px;transition:all .2s}
+.back-link:hover{color:var(--ink);border-color:var(--ink);background:rgba(244,241,234,.05)}
+.container{max-width:500px;margin:50px auto 80px;padding:0 24px}
+.reg-card{border:1px solid var(--line);background:rgba(244,241,234,.02);padding:40px 34px;border-radius:6px}
+.tag{font:500 11.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--mid);margin-bottom:12px}
+h1{font-size:clamp(26px,3.6vw,36px);letter-spacing:-.035em;font-weight:500;margin-bottom:8px}
+.subtitle{font-size:14px;line-height:1.5;color:var(--mid);margin-bottom:28px}
+.form-group{margin-bottom:18px;display:flex;flex-direction:column;gap:6px}
+label{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.05em;color:var(--ink)}
+input{width:100%;height:44px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:4px;padding:0 14px;color:var(--ink);font-family:'Inter Tight',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--ink);background:rgba(255,255,255,.05)}
+input::placeholder{color:rgba(141,139,134,.5)}
+.submit-btn{width:100%;height:46px;margin-top:10px;background:var(--ink);color:var(--bg);border:none;border-radius:99px;font-family:'Inter Tight',sans-serif;font-size:13.5px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:opacity .2s}
+.submit-btn:hover{opacity:.9}
+.divider{position:relative;text-align:center;margin:24px 0;font:400 11px 'IBM Plex Mono',monospace;color:var(--mid)}
+.divider:before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line);z-index:1}
+.divider span{position:relative;background:#0d0d0f;padding:0 12px;z-index:2}
+.social-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:8px;height:40px;border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--ink);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s}
+.social-btn:hover{border-color:var(--ink);background:rgba(244,241,234,.04)}
+.tip{margin-top:22px;text-align:center;font-size:12px;color:var(--mid)}
+.tip a{color:var(--ink);text-decoration:underline}
+
+.success-box{display:none;text-align:center;padding:10px 0}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:#4ade80;border-radius:99px;font:500 11px 'IBM Plex Mono',monospace;margin-bottom:16px}
+.link-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:4px;padding:6px 6px 6px 12px;margin:20px 0}
+.link-box input{background:transparent;border:none;color:var(--ink);font:500 12.5px 'IBM Plex Mono',monospace;width:100%;height:auto;padding:0}
+.copy-btn{padding:8px 14px;border-radius:4px;background:var(--ink);color:var(--bg);border:none;font-size:12px;font-weight:600;cursor:pointer}
+@media (max-width:760px){
+  header{padding:18px}.container{margin-top:30px;padding:0 18px}.reg-card{padding:28px 20px}
+}
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">
+        <img src="/assets/aistudio/Frame_109_723ce2c6.png" alt="Vibeo" />
+        VIBEO
+      </a>
+      <div class="nav-actions">
+        <a href="/about.html" class="back-link">О НАС</a>
+        <a href="/" class="back-link">← НА ГЛАВНУЮ</a>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="reg-card">
+        <div id="form-wrap">
+          <div class="tag">БЕСПЛАТНЫЙ ДОСТУП</div>
+          <h1>Создайте аккаунт в Vibeo</h1>
+          <p class="subtitle">И начните совместный просмотр с друзьями за пару кликов.</p>
+
+          <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label for="name">ВАШЕ ИМЯ ИЛИ НИКНЕЙМ</label>
+              <input id="name" type="text" placeholder="Например: Алекс" required />
+            </div>
+            <div class="form-group">
+              <label for="email">EMAIL</label>
+              <input id="email" type="email" placeholder="name@domain.com" required />
+            </div>
+            <div class="form-group">
+              <label for="pass">ПАРОЛЬ</label>
+              <input id="pass" type="password" placeholder="••••••••" required />
+            </div>
+            <div class="form-group">
+              <label for="room">НАЗВАНИЕ ПЕРВОЙ КОМНАТЫ</label>
+              <input id="room" type="text" placeholder="Киновечер пятницы" />
+            </div>
+
+            <button type="submit" class="submit-btn">СОЗДАТЬ КОМНАТУ И ВОЙТИ &nbsp;→</button>
+          </form>
+
+          <div class="divider"><span>ИЛИ БЫСТРЫЙ ВХОД</span></div>
+          <div class="social-btns">
+            <button class="social-btn" type="button" onclick="handleSocial('Telegram')">Telegram</button>
+            <button class="social-btn" type="button" onclick="handleSocial('Google')">Google</button>
+          </div>
+
+          <div class="tip">
+            Уже есть аккаунт? <a href="#" onclick="alert('Вход в аккаунт: используйте ваш логин и пароль.'); return false;">Войти</a>
+          </div>
+        </div>
+
+        <div id="success-wrap" class="success-box">
+          <div class="badge">● КОМНАТА ГОТОВА</div>
+          <h2 style="font-size:22px;font-weight:500;margin-bottom:8px">Добро пожаловать в Vibeo!</h2>
+          <p style="font-size:14px;color:var(--mid);margin-bottom:18px">Ваша комната создана. Отправьте ссылку друзьям:</p>
+          <div class="link-box">
+            <input type="text" id="share-input" value="https://vibeo.app/room/together-sync" readonly />
+            <button class="copy-btn" id="copy-btn" onclick="copyLink()">Скопировать</button>
+          </div>
+          <button class="submit-btn" onclick="alert('Переход в комнату Vibeo...'); window.location.href='/';">ВОЙТИ В ПЛЕЕР</button>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function handleRegister(e) {
+        e.preventDefault();
+        const slug = Math.random().toString(36).substring(2, 7);
+        document.getElementById('share-input').value = 'https://vibeo.app/room/' + slug;
+        document.getElementById('form-wrap').style.display = 'none';
+        document.getElementById('success-wrap').style.display = 'block';
+      }
+      function handleSocial(p) {
+        const slug = Math.random().toString(36).substring(2, 7);
+        document.getElementById('share-input').value = 'https://vibeo.app/room/' + slug;
+        document.getElementById('form-wrap').style.display = 'none';
+        document.getElementById('success-wrap').style.display = 'block';
+      }
+      function copyLink() {
+        const input = document.getElementById('share-input');
+        const btn = document.getElementById('copy-btn');
+        navigator.clipboard.writeText(input.value).then(() => {
+          btn.textContent = 'Скопировано!';
+          setTimeout(() => { btn.textContent = 'Скопировать'; }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>
