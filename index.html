@@ -96,18 +96,18 @@ body{font-family:'Inter Tight',system-ui,sans-serif;color:var(--ink);background:
     <script type="module">
 import * as THREE from 'three';
 
-/* ВИДЕО НА ГЛАВНОЙ: положи файлы в public/videos/ с именами 1.MP4 … 8.MP4.
-   Подписи при наведении меняются здесь. Нужно минимум 6 роликов. */
+/* ВИДЕО НА ГЛАВНОЙ: файлы лежат в public/videos/ (1.mp4 … 7.mp4).
+   Рядом можно положить постеры 1.jpg … 7.jpg (первый кадр) — их видно, пока ролик грузится.
+   Подписи при наведении меняются здесь. */
 const R2 = '/videos/';
 const WORK = [
-  ['Киновечер', '1. MP4'],
-  ['Сериалы', '2.MP4'],
-  ['Стримы', '3.MP4'],
-  ['Аниме', '4.MP4'],
-  ['С друзьями', '5.MP4'],
-  ['Реакции', '6.MP4'],
-  ['Мультики', '7.MP4'],
-  ['Спорт', '8.MP4'],
+  ['Киновечер', '1.mp4', '1.jpg'],
+  ['Сериалы', '2.mp4', '2.jpg'],
+  ['Стримы', '3.mp4', '3.jpg'],
+  ['Аниме', '4.mp4', '4.jpg'],
+  ['С друзьями', '5.mp4', '5.jpg'],
+  ['Реакции', '6.mp4', '6.jpg'],
+  ['Мультики', '7.mp4', '7.jpg'],
 ];
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -161,24 +161,41 @@ void main(){
   float edge=smoothstep(-.012-px,-.012,d);
   gl_FragColor=vec4(mix(c,vec3(1.),edge*.1),a);
 }`;
-const cards = WORK.map(([title, src], i) => {
+const coverFor = (w, h) => { const va = w / h, ca = CARD_W / CARD_H; return va > ca ? [ca / va, 1] : [1, va / ca]; };
+const imgLoader = new THREE.ImageLoader().setCrossOrigin('anonymous');
+const cards = WORK.map(([title, src, poster], i) => {
   const v = document.createElement('video');
-  Object.assign(v, {crossOrigin:'anonymous', muted:true, loop:true, playsInline:true, preload:'auto', src:R2 + src});
+  Object.assign(v, {crossOrigin:'anonymous', muted:true, loop:true, playsInline:true, preload:'auto'});
   v.setAttribute('playsinline', '');
   const tex = new THREE.VideoTexture(v);
   tex.colorSpace = THREE.NoColorSpace; tex.minFilter = THREE.LinearFilter; tex.magFilter = THREE.LinearFilter; tex.generateMipmaps = false;
+  const ptex = new THREE.Texture();
+  ptex.colorSpace = THREE.NoColorSpace; ptex.minFilter = THREE.LinearFilter; ptex.magFilter = THREE.LinearFilter; ptex.generateMipmaps = false;
   const geo = new THREE.PlaneGeometry(1, 1, NX, NY);
   const mat = new THREE.ShaderMaterial({vertexShader:vs, fragmentShader:fs, transparent:true, side:THREE.DoubleSide,
-    uniforms:{map:{value:tex}, cover:{value:new THREE.Vector2(1, 1)}, aspect:{value:CARD_W / CARD_H}, ready:{value:0}, radius:{value:.018}}});
+    uniforms:{map:{value:ptex}, cover:{value:new THREE.Vector2(1, 1)}, aspect:{value:CARD_W / CARD_H}, ready:{value:0}, radius:{value:.018}}});
   const mesh = new THREE.Mesh(geo, mat); mesh.frustumCulled = false; scene.add(mesh);
-  const c = {i, title, v, tex, geo, mat, mesh, rect:null};
-  v.addEventListener('loadeddata', () => {
-    const va = v.videoWidth / v.videoHeight, ca = CARD_W / CARD_H;
-    mat.uniforms.cover.value.set(va > ca ? ca / va : 1, va > ca ? 1 : va / ca);
+  const c = {i, title, v, tex, geo, mat, mesh, rect:null, live:false, started:false, adv:false};
+  // ролики грузятся по очереди, чтобы не душить канал: следующий стартует, когда готов этот (или через 2.5 с)
+  const advance = () => { if (c.adv) return; c.adv = true; cards[i + 1]?.start(); };
+  c.start = () => { if (c.started) return; c.started = true; v.src = R2 + src; v.load(); setTimeout(advance, 2500); };
+  // постер — мгновенный первый кадр, пока видео не загрузилось
+  if (poster) imgLoader.load(R2 + poster, img => {
+    if (c.live) return;
+    ptex.image = img; ptex.needsUpdate = true;
+    mat.uniforms.cover.value.set(...coverFor(img.width, img.height));
     mat.uniforms.ready.value = 1;
+  }, undefined, () => {});
+  v.addEventListener('loadeddata', () => {
+    c.live = true;
+    mat.uniforms.map.value = tex;
+    mat.uniforms.cover.value.set(...coverFor(v.videoWidth, v.videoHeight));
+    mat.uniforms.ready.value = 1;
+    advance();
   });
   return c;
 });
+cards[0].start(); cards[1]?.start();
 
 /* ---------- layout ---------- */
 const GZ = 8;
