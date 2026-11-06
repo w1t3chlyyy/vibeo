@@ -96,16 +96,18 @@ body{font-family:'Inter Tight',system-ui,sans-serif;color:var(--ink);background:
     <script type="module">
 import * as THREE from 'three';
 
-const R2 = 'https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/';
+/* ВИДЕО НА ГЛАВНОЙ: положи файлы в public/videos/ с именами 1.mp4 … 8.mp4.
+   Подписи при наведении меняются здесь. Нужно минимум 6 роликов. */
+const R2 = '/videos/';
 const WORK = [
-  ['Roadster 3D', 'designs/roadster-3d-car-landing.mp4'],
-  ['Living Portrait', 'aaaf/living-portrait-hero.mp4'],
-  ['Particle Self', 'aaaf/oraciteslArea.mp4'],
-  ['Robot Jellyfish', 'aaaf/medusa-jellyfish-hero.mp4'],
-  ['Ink Reveal', 'designs/ink-reveal-hover.mp4'],
-  ['Space Voyage', 'designs/space-voyage-video.mp4'],
-  ['Helion Dispatch', 'designs/helion-dispatch-landing.mp4'],
-  ['Honey Bee', 'designs/honey-bee-melli-landing.mp4'],
+  ['Киновечер', '1.mp4'],
+  ['Сериалы', '2.mp4'],
+  ['Стримы', '3.mp4'],
+  ['Аниме', '4.mp4'],
+  ['С друзьями', '5.mp4'],
+  ['Реакции', '6.mp4'],
+  ['Мультики', '7.mp4'],
+  ['Спорт', '8.mp4'],
 ];
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));

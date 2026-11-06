@@ -1,0 +1,4 @@
+{
+  "framework": "vite",
+  "rewrites": [{ "source": "/room/:id", "destination": "/room.html" }]
+}

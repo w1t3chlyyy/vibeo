@@ -61,11 +61,13 @@ input:focus{border-color:var(--ink)}
 </div></main>
 <script>
 const $=s=>document.querySelector(s);
+const api=async(u,o)=>{try{const r=await fetch(u,o);return await r.json()}catch{return null}};
 const nextUrl=(()=>{const n=new URLSearchParams(location.search).get('next');return n&&/^\/room\/[\w-]+$/.test(n)?n:''})();
 async function boot(){
-  const m=await (await fetch('/api/me')).json();
-  if(m.user){ show2(m.user); return }
   $('#s1').hidden=false;
+  const m=await api('/api/me');
+  if(!m){$('#login').disabled=true;$('#st').textContent='Сервер Vibeo не отвечает. Нужно запустить server.ts (на Vercel он не работает).';return}
+  if(m.user)show2(m.user);
 }
 function show2(u){
   $('#s1').hidden=true;$('#s2').hidden=false;
@@ -73,24 +75,22 @@ function show2(u){
   if(nextUrl){$('#next').hidden=false;$('#next').href=nextUrl}
 }
 $('#login').onclick=async()=>{
-  const btn=$('#login'); btn.disabled=true;
-  // окно открываем сразу по клику, иначе мобильные браузеры блокируют попап
-  const w=window.open('about:blank','_blank');
-  const r=await fetch('/api/auth/start',{method:'POST'});
-  if(!r.ok){ if(w)w.close(); btn.disabled=false; $('#st').textContent='Бот пока не настроен. Попробуйте позже.'; return }
-  const {token,url}=await r.json();
-  if(w) w.location=url; else location.href=url;
-  $('#reopen').href=url;$('#reopen').hidden=false;
+  const btn=$('#login');btn.disabled=true;
+  const w=window.open('about:blank','_blank'); // окно открываем сразу по клику — иначе мобильные браузеры блокируют
+  const d=await api('/api/auth/start',{method:'POST'});
+  if(!d||!d.token){if(w)w.close();btn.disabled=false;$('#st').textContent='Бот пока не настроен (проверьте TELEGRAM_BOT_TOKEN).';return}
+  if(w)w.location=d.url;else location.href=d.url;
+  $('#reopen').href=d.url;$('#reopen').hidden=false;
   $('#st').innerHTML='<span class="spin"></span>Ждём подтверждения в Telegram…';
   const iv=setInterval(async()=>{
-    const p=await (await fetch('/api/auth/poll?token='+token)).json();
-    if(p.status==='ok'){clearInterval(iv); if(nextUrl){location.href=nextUrl;return} const m=await (await fetch('/api/me')).json(); show2(m.user)}
+    const p=(await api('/api/auth/poll?token='+d.token))||{};
+    if(p.status==='ok'){clearInterval(iv);if(nextUrl){location.href=nextUrl;return}const m=await api('/api/me');if(m&&m.user)show2(m.user)}
     if(p.status==='expired'){clearInterval(iv);btn.disabled=false;$('#st').textContent='Ссылка устарела — нажмите «Войти» ещё раз.'}
   },1500);
 };
 $('#mk').onclick=async()=>{
-  const r=await fetch('/api/rooms',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:$('#rn').value})});
-  const {id}=await r.json(); location.href='/room/'+id;
+  const d=await api('/api/rooms',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:$('#rn').value})});
+  if(d&&d.id)location.href='/room/'+d.id;else alert('Не удалось создать комнату');
 };
 boot();
 </script>

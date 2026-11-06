@@ -82,12 +82,12 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
   <section class="left">
     <div class="stage" id="stage">
       <div id="player"></div>
-      <div class="ph" id="ph">ВСТАВЬТЕ ССЫЛКУ НА ВИДЕО НИЖЕ<br>YOUTUBE · RUTUBE · VK ВИДЕО · MP4</div>
+      <div class="ph" id="ph">ВСТАВЬТЕ ССЫЛКУ НА ВИДЕО НИЖЕ<br>YOUTUBE · RUTUBE · TWITCH · VK · MP4</div>
       <div class="fsc" id="fsc"></div>
       <button class="fsb" id="fsb" aria-label="Во весь экран">⛶</button>
       <div id="ad" hidden><video playsinline></video><span class="adl">РЕКЛАМА</span><button id="adplus">Убрать с Vibeo Plus</button></div>
     </div>
-    <form class="bar" id="vf"><input id="vu" type="url" inputmode="url" placeholder="Ссылка на видео" autocomplete="off" /><button aria-label="Запустить">▶</button></form>
+    <form class="bar" id="vf"><input id="vu" type="url" inputmode="url" placeholder="Ссылка на видео или стрим" autocomplete="off" /><button aria-label="Запустить">▶</button></form>
     <div class="note" id="note" hidden></div>
   </section>
   <section class="chat">
@@ -109,18 +109,19 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 </div></div>
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
+import {createClient} from '@supabase/supabase-js';
 const $=s=>document.querySelector(s);
 const RID=location.pathname.split('/')[2];
 const cid=Math.random().toString(36).slice(2);
-let me,cfg,pl=null,kind='',playing=false,lastT=0,applying=0,cur={playing:false,t:0},reviewed=false,rating=5;
+let chan=null,me,cfg,pl=null,kind='',playing=false,lastT=0,applying=0,cur={playing:false,t:0},reviewed=false,rating=5;
 
 const post=(p,b)=>fetch(`/api/rooms/${RID}/${p}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({cid,...b})});
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
 
 /* ---------- boot ---------- */
 (async()=>{
-  cfg=await (await fetch('/api/me')).json();
+  try{cfg=await (await fetch('/api/me')).json()}catch{$('#rname').textContent='Сервер недоступен';return}
   if(!cfg.user){location.href='/register.html?next='+encodeURIComponent(location.pathname);return}
   me=cfg.user; $('#plus').hidden=!me.plus;
   const r=await fetch('/api/rooms/'+RID);
@@ -128,15 +129,18 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
   const d=await r.json(); $('#rname').textContent=d.name; document.title=d.name+' — Vibeo';
   d.chat.forEach(m=>addMsg(m,true)); scrollEnd(true);
   cur=d.state; if(d.video) mount(d.video);
-  const es=new EventSource(`/api/rooms/${RID}/events`);
-  es.onmessage=e=>{
-    const v=JSON.parse(e.data);
-    if(v.type==='presence') $('#online').textContent='● '+v.n+' онлайн';
-    else if(v.type==='chat') addMsg(v.msg);
-    else if(v.cid===cid) return;
-    else if(v.type==='video'){cur={playing:false,t:0};mount(v.video)}
-    else if(v.type==='state') apply(v);
-  };
+  if(cfg.sb&&cfg.sb.url){
+    const sb=createClient(cfg.sb.url,cfg.sb.anon);
+    chan=sb.channel('room-'+RID,{config:{broadcast:{self:false},presence:{key:cid}}});
+    chan.on('broadcast',{event:'ev'},({payload:v})=>{
+      if(v.type==='chat')addMsg(v.msg);
+      else if(v.cid===cid)return;
+      else if(v.type==='video'){cur={playing:false,t:0};mount(v.video)}
+      else if(v.type==='state')apply(v);
+    });
+    chan.on('presence',{event:'sync'},()=>{$('#online').textContent='● '+Object.keys(chan.presenceState()).length+' онлайн'});
+    chan.subscribe(s=>{if(s==='SUBSCRIBED')chan.track({n:me.name})});
+  }
   setupAds();
 })();
 
@@ -146,6 +150,8 @@ function parse(u){
   if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/))return{k:'yt',id:m[1]};
   if(m=u.match(/rutube\.ru\/(?:video|play\/embed|shorts)\/([a-f0-9]{32})/))return{k:'rt',id:m[1]};
   if(/vk\.com|vkvideo\.ru/.test(u)&&(m=u.match(/video(-?\d+)_(\d+)/)))return{k:'vk',o:m[1],i:m[2]};
+  if(m=u.match(/twitch\.tv\/videos\/(\d+)/))return{k:'tw',vod:m[1]};
+  if(m=u.match(/twitch\.tv\/(\w{3,25})\/?(?:$|\?)/))return{k:'tw',ch:m[1]};
   if(/\.(mp4|webm|mov)(\?|$)/i.test(u))return{k:'file',src:u};
   return null;
 }
@@ -153,6 +159,7 @@ function unmount(){$('#player').innerHTML='';pl=null;kind='';$('#note').hidden=t
 function emit(p,t){
   playing=p;lastT=t;cur={playing:p,t};
   if(Date.now()<applying)return;
+  chan&&chan.send({type:'broadcast',event:'ev',payload:{type:'state',playing:p,t,cid}});
   post('state',{playing:p,t});
 }
 function apply(s){
@@ -168,6 +175,15 @@ function ytReady(cb){
   if(!document.getElementById('ytapi')){
     const s=document.createElement('script');s.id='ytapi';s.src='https://www.youtube.com/iframe_api';document.head.append(s);
     window.onYouTubeIframeAPIReady=()=>ytq.splice(0).forEach(f=>f());
+  }
+}
+let twq=[];
+function twReady(cb){
+  if(window.Twitch&&Twitch.Player)return cb();
+  twq.push(cb);
+  if(!document.getElementById('twapi')){
+    const sc=document.createElement('script');sc.id='twapi';sc.src='https://player.twitch.tv/js/embed/v1.js';
+    sc.onload=()=>twq.splice(0).forEach(f=>f());document.head.append(sc);
   }
 }
 function mount(url){
@@ -205,6 +221,22 @@ function mount(url){
     const cmd=(type,data={})=>f.contentWindow.postMessage(JSON.stringify({type,data}),'*');
     pl={play:()=>cmd('player:play'),pause:()=>cmd('player:pause'),seek:t=>cmd('player:setCurrentTime',{time:Math.floor(t)})};
     f.onload=()=>setTimeout(()=>apply(cur),800);
+  }else if(v.k==='tw'){
+    const d=document.createElement('div');d.id='twp';box.append(d);
+    twReady(()=>{
+      const o={width:'100%',height:'100%',parent:[location.hostname],autoplay:false};
+      if(v.vod)o.video=v.vod;else o.channel=v.ch;
+      const t=new Twitch.Player('twp',o);
+      t.addEventListener(Twitch.Player.READY,()=>{
+        pl={play:()=>t.play(),pause:()=>t.pause(),seek:x=>{if(v.vod&&Math.abs(t.getCurrentTime()-x)>1.5)t.seek(x)}};
+        if(v.vod)apply(cur);
+      });
+      // VOD синхронизируем, у прямого эфира только помечаем «играет» (нужно для рекламы)
+      t.addEventListener(Twitch.Player.PLAY,()=>v.vod?emit(true,t.getCurrentTime()):(playing=true));
+      t.addEventListener(Twitch.Player.PAUSE,()=>v.vod?emit(false,t.getCurrentTime()):(playing=false));
+      if(v.vod){t.addEventListener(Twitch.Player.SEEK,()=>emit(playing,t.getCurrentTime()));t.addEventListener(Twitch.Player.ENDED,askReview)}
+    });
+    if(!v.vod){const n=$('#note');n.hidden=false;n.textContent='Прямой эфир Twitch: синхронизация не нужна — все видят эфир, возможна задержка в пару секунд.'}
   }else if(v.k==='vk'){
     const f=document.createElement('iframe');f.src=`https://vk.com/video_ext.php?oid=${v.o}&id=${v.i}&hd=2`;
     f.allow='autoplay; fullscreen; encrypted-media';f.allowFullscreen=true;box.append(f);
