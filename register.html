@@ -44,7 +44,7 @@ input:focus{border-color:var(--ink)}
     <h1>Войдите в Vibeo</h1>
     <p class="sub">Без паролей и почты: нажмите кнопку, откройте бота и нажмите «Запустить». Вход произойдёт сам.</p>
     <button class="btn" id="login">ВОЙТИ ЧЕРЕЗ TELEGRAM &nbsp;→</button>
-    <a class="btn ghost" id="reopen" hidden target="_blank" rel="noopener">ОТКРЫТЬ БОТА СНОВА</a>
+    <a class="btn ghost" id="reopen" hidden>ОТКРЫТЬ БОТА В TELEGRAM</a>
     <p class="hint" id="st"></p>
   </div>
 
@@ -63,30 +63,51 @@ input:focus{border-color:var(--ink)}
 const $=s=>document.querySelector(s);
 const api=async(u,o)=>{try{const r=await fetch(u,o);return await r.json()}catch{return null}};
 const nextUrl=(()=>{const n=new URLSearchParams(location.search).get('next');return n&&/^\/room\/[\w-]+$/.test(n)?n:''})();
+const mobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+let iv=null;
 async function boot(){
   $('#s1').hidden=false;
   const m=await api('/api/me');
-  if(!m){$('#login').disabled=true;$('#st').textContent='Сервер Vibeo не отвечает. Нужно запустить server.ts (на Vercel он не работает).';return}
-  if(m.user)show2(m.user);
+  if(!m){$('#login').disabled=true;$('#st').textContent='Сервер Vibeo не отвечает. Попробуйте позже.';return}
+  if(m.user){show2(m.user);return}
+  const saved=JSON.parse(localStorage.getItem('vauth')||'null');
+  if(saved&&Date.now()-saved.t<9e5)waitLogin(saved.token,saved.url); // вернулись из Telegram — продолжаем ждать
 }
 function show2(u){
   $('#s1').hidden=true;$('#s2').hidden=false;
   $('#who').textContent='@ '+u.name+(u.plus?'  ·  PLUS':'');
   if(nextUrl){$('#next').hidden=false;$('#next').href=nextUrl}
 }
+function waitLogin(token,url){
+  $('#login').disabled=true;
+  $('#reopen').href=url;$('#reopen').hidden=false;
+  $('#st').innerHTML='<span class="spin"></span>Ждём подтверждения в Telegram…';
+  clearInterval(iv);
+  const check=async()=>{
+    const p=(await api('/api/auth/poll?token='+token))||{};
+    if(p.status==='ok'){
+      clearInterval(iv);localStorage.removeItem('vauth');
+      if(nextUrl){location.href=nextUrl;return}
+      const m=await api('/api/me');if(m&&m.user)show2(m.user);
+    }
+    if(p.status==='expired'){clearInterval(iv);localStorage.removeItem('vauth');$('#login').disabled=false;$('#reopen').hidden=true;$('#st').textContent='Ссылка устарела — нажмите «Войти» ещё раз.'}
+  };
+  iv=setInterval(check,1500);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
+}
 $('#login').onclick=async()=>{
   const btn=$('#login');btn.disabled=true;
-  const w=window.open('about:blank','_blank'); // окно открываем сразу по клику — иначе мобильные браузеры блокируют
   const d=await api('/api/auth/start',{method:'POST'});
-  if(!d||!d.token){if(w)w.close();btn.disabled=false;$('#st').textContent='Бот пока не настроен (проверьте TELEGRAM_BOT_TOKEN).';return}
-  if(w)w.location=d.url;else location.href=d.url;
-  $('#reopen').href=d.url;$('#reopen').hidden=false;
-  $('#st').innerHTML='<span class="spin"></span>Ждём подтверждения в Telegram…';
-  const iv=setInterval(async()=>{
-    const p=(await api('/api/auth/poll?token='+d.token))||{};
-    if(p.status==='ok'){clearInterval(iv);if(nextUrl){location.href=nextUrl;return}const m=await api('/api/me');if(m&&m.user)show2(m.user)}
-    if(p.status==='expired'){clearInterval(iv);btn.disabled=false;$('#st').textContent='Ссылка устарела — нажмите «Войти» ещё раз.'}
-  },1500);
+  if(!d||!d.token){btn.disabled=false;$('#st').textContent='Бот пока не настроен (проверьте TELEGRAM_BOT_TOKEN).';return}
+  localStorage.setItem('vauth',JSON.stringify({token:d.token,url:d.url,t:Date.now()}));
+  waitLogin(d.token,d.url);
+  if(mobile){
+    // на телефоне попапы блокируются — открываем приложение Telegram напрямую; кнопка «Открыть бота» остаётся запасной
+    const bot=new URL(d.url).pathname.slice(1);
+    location.href='tg://resolve?domain='+bot+'&start='+d.token;
+  }else{
+    if(!window.open(d.url,'_blank'))$('#st').innerHTML+='<br>Нажмите «Открыть бота снова».';
+  }
 };
 $('#mk').onclick=async()=>{
   const d=await api('/api/rooms',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:$('#rn').value})});
