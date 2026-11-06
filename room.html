@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content" />
+<meta name="theme-color" content="#0a0a0b" />
+<title>Комната — Vibeo</title>
+<link rel="icon" type="image/png" href="/assets/aistudio/Frame_109_723ce2c6.png" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--ink:#f4f1ea;--mid:#8d8b86;--line:rgba(244,241,234,.14);--card:rgba(244,241,234,.04)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%;background:var(--bg);color:var(--ink);font-family:'Inter Tight',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+body{height:100dvh;display:flex;flex-direction:column}
+header{flex:none;display:flex;align-items:center;gap:10px;padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));border-bottom:1px solid var(--line)}
+.logo img{width:20px;height:20px;border-radius:3px;display:block}
+.rn{flex:1;min-width:0;font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl{font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.08em;padding:3px 8px;border-radius:99px;background:var(--ink);color:var(--bg)}
+.ib{height:34px;min-width:34px;padding:0 10px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--ink);font:500 12px 'IBM Plex Mono',monospace;cursor:pointer}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+.left{flex:none}
+.stage{position:relative;width:100%;aspect-ratio:16/9;background:#000;overflow:hidden}
+#player{position:absolute;inset:0}
+#player iframe,#player video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
+.ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;font:400 12px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--mid);background:radial-gradient(ellipse at 50% 0,rgba(244,241,234,.1),transparent 70%)}
+.fsb{position:absolute;top:8px;right:8px;z-index:6;width:36px;height:36px;border:none;border-radius:10px;background:rgba(10,10,11,.55);backdrop-filter:blur(8px);color:var(--ink);font-size:17px;cursor:pointer}
+.fsc{display:none;position:absolute;top:max(10px,env(safe-area-inset-top));left:12px;right:58px;z-index:5;flex-direction:column;gap:5px;pointer-events:none}
+.fsc div{align-self:flex-start;max-width:100%;padding:6px 11px;border-radius:12px;background:rgba(10,10,11,.62);backdrop-filter:blur(8px);font-size:13px;line-height:1.35;animation:in .2s}
+.fsc b{font-weight:600;margin-right:6px;color:#fff}
+@keyframes in{from{opacity:0;transform:translateY(-6px)}}
+.stage.fs{position:fixed;inset:0;z-index:50;width:100vw;height:100dvh;aspect-ratio:auto}
+.stage.fs .fsc{display:flex}
+#ad{position:absolute;inset:0;z-index:10;background:#000;cursor:pointer}
+#ad video{width:100%;height:100%;object-fit:contain}
+.adl{position:absolute;top:10px;left:10px;font:500 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;padding:4px 8px;border-radius:99px;background:rgba(0,0,0,.6)}
+#adplus{position:absolute;bottom:10px;right:10px;padding:8px 12px;border:1px solid rgba(244,241,234,.5);border-radius:99px;background:rgba(0,0,0,.6);color:var(--ink);font:500 11px 'IBM Plex Mono',monospace}
+.bar{display:flex;gap:8px;padding:10px 12px}
+.bar input,.cmp input{flex:1;min-width:0;height:42px;border:1px solid var(--line);border-radius:99px;background:var(--card);padding:0 16px;color:var(--ink);font:16px 'Inter Tight',sans-serif;outline:none}
+.bar input:focus,.cmp input:focus{border-color:rgba(244,241,234,.5)}
+.bar button,.cmp button{flex:none;width:42px;height:42px;border:none;border-radius:50%;background:var(--ink);color:var(--bg);font-size:16px;cursor:pointer}
+.note{padding:0 14px 8px;font:400 11px 'IBM Plex Mono',monospace;color:var(--mid)}
+.chat{flex:1;min-height:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.top{flex:none;display:flex;justify-content:space-between;padding:8px 14px;font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--mid)}
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:0 14px 8px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+.m{max-width:88%;padding:8px 12px;border-radius:14px;background:var(--card);font-size:14.5px;line-height:1.4;word-break:break-word}
+.m.me{align-self:flex-end;background:rgba(244,241,234,.12)}
+.m small{display:block;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--mid);margin-bottom:2px}
+.m .p{color:var(--ink)}
+.sys{align-self:center;font:400 11px 'IBM Plex Mono',monospace;color:var(--mid)}
+.cmp{flex:none;display:flex;gap:8px;padding:8px 12px;padding-bottom:max(10px,env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:end center;background:rgba(0,0,0,.7)}
+.sheet{width:100%;max-width:440px;background:#111113;border:1px solid var(--line);border-radius:18px 18px 0 0;padding:22px 20px;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+.sheet h3{font-size:20px;font-weight:500;letter-spacing:-.02em;margin-bottom:6px}
+.sheet p{font-size:13.5px;line-height:1.5;color:var(--mid);margin-bottom:14px}
+.stars{display:flex;gap:6px;margin-bottom:12px}
+.stars button{flex:1;height:46px;border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--mid);font-size:20px}
+.stars button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sheet textarea{width:100%;height:84px;resize:none;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:12px;color:var(--ink);font:16px 'Inter Tight',sans-serif;outline:none;margin-bottom:12px}
+.sheet .row{display:flex;gap:8px}
+.sheet .row button,.sheet .row a{flex:1;height:46px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--ink);font:600 13px 'Inter Tight',sans-serif;display:grid;place-items:center;text-decoration:none}
+.sheet .row .pri{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);padding:9px 16px;border-radius:99px;background:var(--ink);color:var(--bg);font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:200;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%)}
+@media(min-width:900px){
+  main{flex-direction:row}
+  .left{flex:1;min-width:0;overflow-y:auto;padding:16px}
+  .stage{border-radius:10px;border:1px solid var(--line)}
+  .chat{flex:none;width:380px;border-top:none;border-left:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" class="logo"><img src="/assets/aistudio/Frame_109_723ce2c6.png" alt="Vibeo" /></a>
+  <div class="rn" id="rname">…</div>
+  <span class="pl" id="plus" hidden>PLUS</span>
+  <button class="ib" id="inv">ССЫЛКА</button>
+  <button class="ib" id="fin">★</button>
+</header>
+<main>
+  <section class="left">
+    <div class="stage" id="stage">
+      <div id="player"></div>
+      <div class="ph" id="ph">ВСТАВЬТЕ ССЫЛКУ НА ВИДЕО НИЖЕ<br>YOUTUBE · RUTUBE · VK ВИДЕО · MP4</div>
+      <div class="fsc" id="fsc"></div>
+      <button class="fsb" id="fsb" aria-label="Во весь экран">⛶</button>
+      <div id="ad" hidden><video playsinline></video><span class="adl">РЕКЛАМА</span><button id="adplus">Убрать с Vibeo Plus</button></div>
+    </div>
+    <form class="bar" id="vf"><input id="vu" type="url" inputmode="url" placeholder="Ссылка на видео" autocomplete="off" /><button aria-label="Запустить">▶</button></form>
+    <div class="note" id="note" hidden></div>
+  </section>
+  <section class="chat">
+    <div class="top"><span>ЧАТ</span><span id="online"></span></div>
+    <div class="msgs" id="msgs"></div>
+    <form class="cmp" id="cf"><input id="ct" maxlength="500" placeholder="Сообщение…" autocomplete="off" /><button aria-label="Отправить">↑</button></form>
+  </section>
+</main>
+
+<div class="modal" id="rev" hidden><div class="sheet">
+  <h3>Как вам просмотр?</h3><p>Отзыв получит команда Vibeo.</p>
+  <div class="stars" id="stars"></div>
+  <textarea id="rt" maxlength="1000" placeholder="Что понравилось, что улучшить?"></textarea>
+  <div class="row"><button id="rno">Позже</button><button class="pri" id="rsend">Отправить</button></div>
+</div></div>
+<div class="modal" id="plm" hidden><div class="sheet">
+  <h3>Vibeo Plus</h3><p>Высокое качество и просмотр без рекламы Vibeo. Подключение — через бота.</p>
+  <div class="row"><button id="plc">Закрыть</button><a class="pri" id="pla" target="_blank" rel="noopener">Открыть бота</a></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const RID=location.pathname.split('/')[2];
+const cid=Math.random().toString(36).slice(2);
+let me,cfg,pl=null,kind='',playing=false,lastT=0,applying=0,cur={playing:false,t:0},reviewed=false,rating=5;
+
+const post=(p,b)=>fetch(`/api/rooms/${RID}/${p}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({cid,...b})});
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
+
+/* ---------- boot ---------- */
+(async()=>{
+  cfg=await (await fetch('/api/me')).json();
+  if(!cfg.user){location.href='/register.html?next='+encodeURIComponent(location.pathname);return}
+  me=cfg.user; $('#plus').hidden=!me.plus;
+  const r=await fetch('/api/rooms/'+RID);
+  if(!r.ok){$('#rname').textContent='Комната не найдена';return}
+  const d=await r.json(); $('#rname').textContent=d.name; document.title=d.name+' — Vibeo';
+  d.chat.forEach(m=>addMsg(m,true)); scrollEnd(true);
+  cur=d.state; if(d.video) mount(d.video);
+  const es=new EventSource(`/api/rooms/${RID}/events`);
+  es.onmessage=e=>{
+    const v=JSON.parse(e.data);
+    if(v.type==='presence') $('#online').textContent='● '+v.n+' онлайн';
+    else if(v.type==='chat') addMsg(v.msg);
+    else if(v.cid===cid) return;
+    else if(v.type==='video'){cur={playing:false,t:0};mount(v.video)}
+    else if(v.type==='state') apply(v);
+  };
+  setupAds();
+})();
+
+/* ---------- video ---------- */
+function parse(u){
+  let m;
+  if(m=u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/))return{k:'yt',id:m[1]};
+  if(m=u.match(/rutube\.ru\/(?:video|play\/embed|shorts)\/([a-f0-9]{32})/))return{k:'rt',id:m[1]};
+  if(/vk\.com|vkvideo\.ru/.test(u)&&(m=u.match(/video(-?\d+)_(\d+)/)))return{k:'vk',o:m[1],i:m[2]};
+  if(/\.(mp4|webm|mov)(\?|$)/i.test(u))return{k:'file',src:u};
+  return null;
+}
+function unmount(){$('#player').innerHTML='';pl=null;kind='';$('#note').hidden=true}
+function emit(p,t){
+  playing=p;lastT=t;cur={playing:p,t};
+  if(Date.now()<applying)return;
+  post('state',{playing:p,t});
+}
+function apply(s){
+  cur={playing:s.playing,t:s.t};playing=s.playing;
+  if(!pl)return;
+  applying=Date.now()+900;
+  pl.seek(s.t);s.playing?pl.play():pl.pause();
+}
+let ytq=[];
+function ytReady(cb){
+  if(window.YT&&YT.Player)return cb();
+  ytq.push(cb);
+  if(!document.getElementById('ytapi')){
+    const s=document.createElement('script');s.id='ytapi';s.src='https://www.youtube.com/iframe_api';document.head.append(s);
+    window.onYouTubeIframeAPIReady=()=>ytq.splice(0).forEach(f=>f());
+  }
+}
+function mount(url){
+  unmount();
+  const v=parse(url);
+  if(!v){toast('Ссылка не распознана');$('#ph').hidden=false;return}
+  $('#ph').hidden=true;kind=v.k;const box=$('#player');
+  if(v.k==='file'){
+    const e=document.createElement('video');e.src=v.src;e.controls=true;e.playsInline=true;box.append(e);
+    e.onplay=()=>emit(true,e.currentTime);e.onpause=()=>emit(false,e.currentTime);
+    e.onseeked=()=>emit(!e.paused,e.currentTime);e.onended=askReview;
+    pl={play:()=>e.play().catch(()=>{}),pause:()=>e.pause(),seek:t=>{if(Math.abs(e.currentTime-t)>1)e.currentTime=t}};
+    e.onloadedmetadata=()=>apply(cur);
+  }else if(v.k==='yt'){
+    const d=document.createElement('div');d.id='ytp';box.append(d);
+    ytReady(()=>{
+      const y=new YT.Player('ytp',{videoId:v.id,playerVars:{playsinline:1,rel:0,fs:0,origin:location.origin},events:{
+        onReady:()=>{
+          pl={play:()=>y.playVideo(),pause:()=>y.pauseVideo(),seek:t=>{if(Math.abs(y.getCurrentTime()-t)>1)y.seekTo(t,true)}};
+          if(me.plus)y.setPlaybackQuality('hd1080');
+          apply(cur);
+          setInterval(()=>{ // YouTube не шлёт событие перемотки — ловим скачок времени
+            if(kind!=='yt')return;const t=y.getCurrentTime();
+            if(playing&&Math.abs(t-(lastT+1))>2.5&&y.getPlayerState()===1)emit(true,t);
+            lastT=t;
+          },1000);
+        },
+        onStateChange:ev=>{const s=ev.data,t=ev.target.getCurrentTime();
+          if(s===1)emit(true,t);else if(s===2)emit(false,t);else if(s===0)askReview()}
+      }});
+    });
+  }else if(v.k==='rt'){
+    const f=document.createElement('iframe');f.src='https://rutube.ru/play/embed/'+v.id;
+    f.allow='autoplay; fullscreen; encrypted-media';f.allowFullscreen=true;box.append(f);
+    const cmd=(type,data={})=>f.contentWindow.postMessage(JSON.stringify({type,data}),'*');
+    pl={play:()=>cmd('player:play'),pause:()=>cmd('player:pause'),seek:t=>cmd('player:setCurrentTime',{time:Math.floor(t)})};
+    f.onload=()=>setTimeout(()=>apply(cur),800);
+  }else if(v.k==='vk'){
+    const f=document.createElement('iframe');f.src=`https://vk.com/video_ext.php?oid=${v.o}&id=${v.i}&hd=2`;
+    f.allow='autoplay; fullscreen; encrypted-media';f.allowFullscreen=true;box.append(f);
+    const n=$('#note');n.hidden=false;n.textContent='VK Видео: авто-синхронизации нет — нажимайте play одновременно.';
+  }
+}
+addEventListener('message',e=>{
+  if(kind!=='rt'||!/rutube/.test(e.origin))return;
+  let d;try{d=JSON.parse(e.data)}catch{return}
+  if(d.type==='player:currentTime')lastT=d.data.time;
+  if(d.type==='player:changeState'){const s=d.data.state;
+    if(s==='playing')emit(true,lastT);else if(s==='paused')emit(false,lastT);else if(s==='stopped')askReview()}
+});
+$('#vf').onsubmit=e=>{
+  e.preventDefault();const u=$('#vu').value.trim();if(!u)return;
+  if(!parse(u))return toast('Не получилось распознать ссылку');
+  cur={playing:false,t:0};mount(u);post('video',{url:u});$('#vu').value='';$('#vu').blur();
+};
+
+/* ---------- chat ---------- */
+const msgs=$('#msgs');
+function scrollEnd(f){if(f||msgs.scrollHeight-msgs.scrollTop-msgs.clientHeight<140)msgs.scrollTop=msgs.scrollHeight}
+function addMsg(m,quiet){
+  const own=m.name===me.name;
+  const d=document.createElement('div');d.className='m'+(own?' me':'');
+  const s=document.createElement('small');s.textContent=m.name+(m.plus?' ·  PLUS':'');
+  const t=document.createElement('span');t.textContent=m.text;d.append(s,t);msgs.append(d);scrollEnd(own);
+  if(!quiet&&$('#stage').classList.contains('fs')){
+    const f=document.createElement('div'),b=document.createElement('b');b.textContent=m.name;
+    f.append(b,document.createTextNode(m.text));const box=$('#fsc');box.append(f);
+    while(box.children.length>4)box.firstChild.remove();
+    setTimeout(()=>f.remove(),7000);
+  }
+}
+$('#cf').onsubmit=e=>{e.preventDefault();const t=$('#ct').value.trim();if(!t)return;$('#ct').value='';post('chat',{text:t})};
+
+/* ---------- fullscreen (нативный + запасной CSS-режим для iPhone) ---------- */
+const stage=$('#stage');
+function setFs(on){
+  stage.classList.toggle('fs',on);
+  if(on){stage.requestFullscreen?.().catch(()=>{});screen.orientation?.lock?.('landscape').catch(()=>{})}
+  else{if(document.fullscreenElement)document.exitFullscreen?.();screen.orientation?.unlock?.();$('#fsc').innerHTML=''}
+}
+$('#fsb').onclick=()=>setFs(!stage.classList.contains('fs'));
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&stage.classList.contains('fs'))setFs(false)});
+
+/* ---------- invite / reviews / plus ---------- */
+$('#inv').onclick=async()=>{
+  const u=cfg.publicUrl+'/room/'+RID;
+  if(navigator.share){try{await navigator.share({title:'Vibeo',text:'Смотрим вместе',url:u});return}catch{}}
+  try{await navigator.clipboard.writeText(u);toast('Ссылка скопирована')}catch{prompt('Ссылка:',u)}
+};
+const st=$('#stars');
+for(let i=1;i<=5;i++){const b=document.createElement('button');b.textContent='★';b.type='button';b.onclick=()=>{rating=i;paint()};st.append(b)}
+const paint=()=>[...st.children].forEach((b,i)=>b.classList.toggle('on',i<rating));paint();
+function askReview(){if(reviewed)return;reviewed=true;if($('#stage').classList.contains('fs'))setFs(false);$('#rev').hidden=false}
+$('#fin').onclick=()=>{reviewed=true;$('#rev').hidden=false};
+$('#rno').onclick=()=>$('#rev').hidden=true;
+$('#rsend').onclick=async()=>{
+  await fetch('/api/review',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({rating,text:$('#rt').value,room:RID})});
+  $('#rev').hidden=true;$('#rt').value='';toast('Спасибо за отзыв!');
+};
+function openPlus(){$('#pla').href=`https://t.me/${cfg.bot}?start=plus`;$('#plm').hidden=false}
+$('#plc').onclick=()=>$('#plm').hidden=true;
+$('#plus').onclick=openPlus;
+
+/* ---------- реклама (только без Plus), каждые N минут ---------- */
+function setupAds(){
+  if(me.plus||!cfg.ad)return;
+  setInterval(()=>{if(playing&&pl&&$('#ad').hidden)showAd()},cfg.ad.minutes*60000);
+}
+function showAd(){
+  const o=$('#ad'),v=o.querySelector('video'),was=playing;
+  applying=Date.now()+1500;pl.pause();
+  o.hidden=false;v.src=cfg.ad.video;v.muted=false;v.play().catch(()=>{v.muted=true;v.play().catch(()=>{})});
+  const done=()=>{o.hidden=true;v.removeAttribute('src');v.load();applying=Date.now()+1500;if(was)pl.play()};
+  v.onended=done;v.onerror=done;
+  o.onclick=e=>{if(e.target.id==='adplus')return openPlus();window.open(cfg.ad.link,'_blank','noopener')};
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+В package.json замените блок "scripts" на:
+
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build",
+    "start": "NODE_ENV=production tsx server.ts",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit"
+  },
+
+Новые зависимости не нужны. Скопируйте .env.example в .env и заполните.
