@@ -96,18 +96,18 @@ body{font-family:'Inter Tight',system-ui,sans-serif;color:var(--ink);background:
     <script type="module">
 import * as THREE from 'three';
 
-/* ВИДЕО НА ГЛАВНОЙ: файлы лежат в public/videos/ (1.mp4 … 7.mp4).
+/* ВИДЕО НА ГЛАВНОЙ: файлы лежат в public/videos/ (1.MP4 … 7.MP4).
    Рядом можно положить постеры 1.jpg … 7.jpg (первый кадр) — их видно, пока ролик грузится.
    Подписи при наведении меняются здесь. */
 const R2 = '/videos/';
 const WORK = [
-  ['Киновечер', '1.mp4', '1.jpg'],
-  ['Сериалы', '2.mp4', '2.jpg'],
-  ['Стримы', '3.mp4', '3.jpg'],
-  ['Аниме', '4.mp4', '4.jpg'],
-  ['С друзьями', '5.mp4', '5.jpg'],
-  ['Реакции', '6.mp4', '6.jpg'],
-  ['Мультики', '7.mp4', '7.jpg'],
+  ['Киновечер', '1.MP4', '1.jpg'],
+  ['Сериалы', '2.MP4', '2.jpg'],
+  ['Стримы', '3.MP4', '3.jpg'],
+  ['Аниме', '4.MP4', '4.jpg'],
+  ['С друзьями', '5.MP4', '5.jpg'],
+  ['Реакции', '6.MP4', '6.jpg'],
+  ['Мультики', '7.MP4', '7.jpg'],
 ];
 const $ = id => document.getElementById(id);
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
